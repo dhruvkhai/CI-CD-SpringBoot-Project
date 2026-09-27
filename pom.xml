@@ -18,7 +18,7 @@
     <description>Simple Spring Boot application exposing a message on port 8023</description>
 
     <properties>
-        <java.version>21</java.version>
+        <java.version>17</java.version>
     </properties>
 
     <dependencies>
