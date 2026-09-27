@@ -27,7 +27,7 @@ jobs:
         run: mvn clean package -DskipTests
 
       - name: Build Image
-        run: docker build -t ${{secrets.DOCKER_USERNAME}}/${{env.Docker_IMAGE}}:latest .
+        run: docker build -t ${{secrets.DOCKER_USERNAME}}/${{env.IMAGE_NAME}}:latest .
 
       - name: Login Docker
         uses: docker/login-action@v4
@@ -36,7 +36,7 @@ jobs:
             password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Image Push
-        run: docker push ${{secrets.DOCKER_USERNAME}}/${{env.Docker_IMAGE}}:latest
+        run: docker push ${{secrets.DOCKER_USERNAME}}/${{env.IMAGE_NAME}}:latest
 
       - name: Deploy On EC2
         uses: appleboy/ssh-action@v1
@@ -45,8 +45,8 @@ jobs:
             username: ${{ secrets.EC2_USER}}
             key: ${{ secrets.EC2_SSH_KEY }}
             script: |
-              docker pull ${{secrets.DOCKER_USERNAME}}/${{env.Docker_IMAGE}}:latest
+              docker pull ${{secrets.DOCKER_USERNAME}}/${{env.IMAGE_NAME}}:latest
               docker stop sprin-boot-app || true
               docker rm sprin-boot-app || true
-              docker run -d -p 8023:8023 --name spring-boot-app --restart unless-stopped ${{secrets.DOCKER_USERNAME}}/${{env.Docker_IMAGE}}:latest
+              docker run -d -p 8023:8023 --name spring-boot-app --restart unless-stopped ${{secrets.DOCKER_USERNAME}}/${{env.IMAGE_NAME}}:latest
               docker image prune -f
